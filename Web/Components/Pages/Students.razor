@@ -1,5 +1,6 @@
 @page "/students"
-@using Core.Application.Services.StudentServices
+@using Application.Services.StudentServices
+@using Domain.Entities
 @inject IStudentService StudentService
 <h1>
     Students List
@@ -31,6 +32,6 @@
         protected override void OnInitialized()
         {
             students= StudentService.GetAllStudents();
-            
+
         }
     }

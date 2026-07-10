@@ -1,4 +1,5 @@
-namespace Core.Application.Services.StudentServices
+using Domain.Entities;
+namespace Application.Services.StudentServices
 {
     public interface IStudentService
     {

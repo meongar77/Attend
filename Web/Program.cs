@@ -1,4 +1,4 @@
-using Core.Application.Services.StudentServices;
+using Application.Services.StudentServices;
 using Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
