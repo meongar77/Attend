@@ -1,3 +1,4 @@
+using Core.Application.Services.StudentServices;
 using Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+//Registration of Services
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 var app = builder.Build();
 
