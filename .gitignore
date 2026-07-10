@@ -1,0 +1,36 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Bb]uild/
+[Oo]ut/
+[Oo]utput/
+
+# .NET / NuGet
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+.vscode-test/
+*.dbmdl
+*.jfm
+*.cache
+*.log
+
+# JetBrains / Rider
+.idea/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
