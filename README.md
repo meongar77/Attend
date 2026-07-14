@@ -12,3 +12,10 @@ Git initialization Steps
 7. git commit -m "Initial commit"
 8. git pull origin main --allow-unrelated-histories
 9. git push origin main
+
+
+
+Entity framework
+1. dotnet tool install --global dotnet-ef --version 10.0.0
+2. dotnet ef migrations add InitialMigration --project ../Infrastructure/Infrastructure.csproj --startup-project ../Web/Web.csproj (For Every migration you change the name of file)
+3. dotnet ef database update --project ../Infrastructure/Infrastructure.csproj --startup-project ../Web/Web.csproj
