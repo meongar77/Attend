@@ -1,5 +1,7 @@
+using Application.Interfaces;
 using Application.Services.StudentServices;
 using Web.Components;
+using Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +11,7 @@ builder.Services.AddRazorComponents()
 
 //Registration of Services
 builder.Services.AddScoped<IStudentService, StudentService>();
-
+builder.Services.AddScoped<IStudent, StudentRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

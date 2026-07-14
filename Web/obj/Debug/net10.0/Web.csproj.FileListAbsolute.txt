@@ -90,3 +90,5 @@ C:\Users\meong\Trainings\Attend\Web\obj\Debug\net10.0\refint\Web.dll
 C:\Users\meong\Trainings\Attend\Web\obj\Debug\net10.0\Web.pdb
 C:\Users\meong\Trainings\Attend\Web\obj\Debug\net10.0\Web.genruntimeconfig.cache
 C:\Users\meong\Trainings\Attend\Web\obj\Debug\net10.0\ref\Web.dll
+C:\Users\meong\Trainings\Attend\Web\bin\Debug\net10.0\Infrastructure.dll
+C:\Users\meong\Trainings\Attend\Web\bin\Debug\net10.0\Infrastructure.pdb
