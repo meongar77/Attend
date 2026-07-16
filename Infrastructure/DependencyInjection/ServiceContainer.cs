@@ -11,9 +11,7 @@ namespace Infrastructure.DependencyInjection
         
         public static IServiceCollection AddInfrastructureService(this IServiceCollection services, IConfiguration configuration)
         {
-            // services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(configuration.GetConnectionString("ITSINDACON")), ServiceLifetime.Scoped
-            // );
+            
 
             // Add infrastructure services here, e.g., DbContext, Repositories, etc.
 
@@ -21,6 +19,7 @@ namespace Infrastructure.DependencyInjection
                 options.UseSqlServer(configuration.GetConnectionString("ATTENDCON"))
             );
             services.AddScoped<IStudent, StudentRepository>();
+            
             return services;
 
         }
