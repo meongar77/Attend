@@ -22,6 +22,70 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.Classs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EducationLeveId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EducationLevelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FacultyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EducationLevelId");
+
+                    b.HasIndex("FacultyId");
+
+                    b.ToTable("Classses");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EducationLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EducationLevels");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Faculty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Faculties");
+                });
+
             modelBuilder.Entity("Domain.Entities.Student", b =>
                 {
                     b.Property<int>("Id")
@@ -56,6 +120,35 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Classs", b =>
+                {
+                    b.HasOne("Domain.Entities.EducationLevel", "EducationLevel")
+                        .WithMany("classses")
+                        .HasForeignKey("EducationLevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Faculty", "Faculty")
+                        .WithMany("classses")
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EducationLevel");
+
+                    b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EducationLevel", b =>
+                {
+                    b.Navigation("classses");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Faculty", b =>
+                {
+                    b.Navigation("classses");
                 });
 #pragma warning restore 612, 618
         }
