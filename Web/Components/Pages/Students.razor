@@ -1,11 +1,13 @@
 @page "/students"
 @using Application.Services.StudentServices
 @using Domain.Entities
+@inject NavigationManager Navigation
 @inject IStudentService StudentService
 <h1>
     Students List
 </h1>
-<table>
+<a class="btn btn-primary" href="/students/add">Add Student</a>
+<table class="table" >
     <tr>
         <th>Id</th>
         <th>Name</th>
@@ -34,4 +36,5 @@
             students= StudentService.GetAllStudents();
 
         }
+
     }
