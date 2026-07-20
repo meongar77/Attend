@@ -15,6 +15,7 @@
         <th>Date Of Birth</th>
         <th>Phone</th>
         <th>Email</th>
+        <th>Details</th>
     </tr>
     @foreach(var student in students){
         <tr>
@@ -24,6 +25,7 @@
             <td>@student.DateOfBirth</td>
             <td>@student.Phone</td>
             <td>@student.Email</td>
+            <td><a href="/students/@student.Id" class="btn btn-primary" >View Details</a></td>
         </tr>
     }
 </table>

@@ -18,6 +18,10 @@ namespace Application.Services.StudentServices
             _student.AddStudent(student);
             
         }
+        public Student? GetStudentById(int id)
+        {
+            return _student.GetStudentById(id);
+        }
     }
     
 }

@@ -21,5 +21,9 @@ namespace Infrastructure.Repositories
             _dbcontext.Students.Add(student);
             _dbcontext.SaveChanges();
         }
+        public Student? GetStudentById(int id)
+        {
+            return _dbcontext.Students.FirstOrDefault(tt => tt.Id == id);
+        }
     }
 }
