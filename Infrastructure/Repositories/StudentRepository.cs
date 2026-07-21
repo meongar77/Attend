@@ -1,3 +1,4 @@
+using Application.DTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Data;
@@ -16,9 +17,17 @@ namespace Infrastructure.Repositories
         {
             return _dbcontext.Students.ToList();
         }
-        public void AddStudent(Student student)
+        public void AddStudent(AddStudentDTO student)
         {
-            _dbcontext.Students.Add(student);
+            
+            _dbcontext.Students.Add(new Student{
+                Name = student.Name,
+                DateOfBirth = student.DateOfBirth,
+                Address = student.Address,
+                Phone= student.Phone,
+                Email = student.Email,
+                Sex= student.Sex,
+            });
             _dbcontext.SaveChanges();
         }
         public Student? GetStudentById(int id)

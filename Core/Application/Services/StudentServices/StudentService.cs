@@ -1,3 +1,4 @@
+using Application.DTOs;
 using Application.Interfaces;
 using Domain.Entities;
 namespace Application.Services.StudentServices
@@ -13,7 +14,7 @@ namespace Application.Services.StudentServices
         {
            return _student.GetAllStudents();
         }
-        public void AddStudent(Student student)
+        public void AddStudent(AddStudentDTO student)
         {
             _student.AddStudent(student);
             
