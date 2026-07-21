@@ -23,7 +23,25 @@ namespace Infrastructure.Repositories
         }
         public Student? GetStudentById(int id)
         {
-            return _dbcontext.Students.FirstOrDefault(tt => tt.Id == id);
+            return _dbcontext.Students.FirstOrDefault(s => s.Id == id);
+        }
+        public void UpdateStudent(Student student)
+        {
+            // _dbcontext.Students.Update(student);
+            // _dbcontext.SaveChanges();
+
+             var ExistingStudent =  _dbcontext.Students.FirstOrDefault(s => s.Id == student.Id);
+             if(ExistingStudent != null)
+            {
+                ExistingStudent.Name = student.Name;
+                ExistingStudent.Sex = student.Sex;
+                ExistingStudent.Address = student.Address;
+                ExistingStudent.Phone = ExistingStudent.Phone;
+
+                _dbcontext.SaveChanges();
+            }
+
+
         }
     }
 }

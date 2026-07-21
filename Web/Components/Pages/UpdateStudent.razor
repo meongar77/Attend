@@ -1,0 +1,51 @@
+@page "/students/update/{id:int}"
+@using Domain.Entities
+@using Application.Services.StudentServices
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IStudentService StudentService
+<div>
+    <EditForm OnValidSubmit="EditStudent" Model="student">
+        <div class="form-group">
+            <label>Name</label>
+            <InputText @bind-Value="student.Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Sex</label>
+            <InputSelect @bind-Value="student.Sex" class="form-control" >
+            <option value="">--Select Sex--</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label>Adress</label>
+            <InputText @bind-Value="student.Address" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Adress</label>
+            <InputText @bind-Value="student.Phone" class="form-control" />
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Update</button>
+    </EditForm>
+</div>
+@code{
+    [Parameter]
+    public int Id{get;set;}
+    private Student? existingstudent;
+    private Student student = new();
+    protected override void OnParametersSet()
+    {
+        existingstudent= StudentService.GetStudentById(Id);
+        if (existingstudent != null)
+        {
+            student = existingstudent;
+        }
+    }
+    private void EditStudent()
+    {
+        StudentService.UpdateStudent(student);
+        Navigation.NavigateTo("/students");
+    }
+}
