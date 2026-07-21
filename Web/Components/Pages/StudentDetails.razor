@@ -1,5 +1,5 @@
 @page "/students/{id:int}"
-@using Domain.Entities
+@using Application.DTOs
 @using Application.Services.StudentServices
 @inject IStudentService StudentService
 
@@ -26,7 +26,7 @@
 @code{
     [Parameter] 
     public int Id{get;set;}
-    private Student? student;
+    private GetStudentDTO? student;
     protected override void OnParametersSet()
     {
         student = StudentService.GetStudentById(Id);

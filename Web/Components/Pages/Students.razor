@@ -1,6 +1,6 @@
 @page "/students"
 @using Application.Services.StudentServices
-@using Domain.Entities
+@using Application.DTOs
 @inject NavigationManager Navigation
 @inject IStudentService StudentService
 <h1>
@@ -32,7 +32,7 @@
 </table>
 @code{
     
-        private List<Student> students  = new List<Student>();
+        private List<GetStudentDTO> students  = new List<GetStudentDTO>();
         
         protected override void OnInitialized()
         {

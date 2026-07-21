@@ -12,10 +12,18 @@ namespace Infrastructure.Repositories
             _dbcontext= dbcontext;
         }
 
-
-        public List<Student> GetAllStudents()
+        public List<GetStudentDTO> GetAllStudents()
         {
-            return _dbcontext.Students.ToList();
+            return _dbcontext.Students.Select(s => new GetStudentDTO
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Address=s.Address,
+                DateOfBirth = s.DateOfBirth,
+                Sex = s.Sex,
+                Phone= s.Phone,
+                Email = s.Email,
+            }).ToList();
         }
         public void AddStudent(AddStudentDTO student)
         {
@@ -30,11 +38,20 @@ namespace Infrastructure.Repositories
             });
             _dbcontext.SaveChanges();
         }
-        public Student? GetStudentById(int id)
+        public GetStudentDTO? GetStudentById(int id)
         {
-            return _dbcontext.Students.FirstOrDefault(s => s.Id == id);
+            return _dbcontext.Students.Where(s => s.Id == id).Select(s=> new GetStudentDTO
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Address=s.Address,
+                DateOfBirth = s.DateOfBirth,
+                Sex = s.Sex,
+                Phone= s.Phone,
+                Email = s.Email
+            }).FirstOrDefault();
         }
-        public void UpdateStudent(Student student)
+        public void UpdateStudent(UpdateStudentDTO student)
         {
             // _dbcontext.Students.Update(student);
             // _dbcontext.SaveChanges();
@@ -44,6 +61,7 @@ namespace Infrastructure.Repositories
             {
                 ExistingStudent.Name = student.Name;
                 ExistingStudent.Sex = student.Sex;
+                ExistingStudent.DateOfBirth = student.DateOfBirth;
                 ExistingStudent.Address = student.Address;
                 ExistingStudent.Phone = ExistingStudent.Phone;
 

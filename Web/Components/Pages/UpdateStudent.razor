@@ -1,5 +1,5 @@
 @page "/students/update/{id:int}"
-@using Domain.Entities
+@using Application.DTOs
 @using Application.Services.StudentServices
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
@@ -33,14 +33,17 @@
 @code{
     [Parameter]
     public int Id{get;set;}
-    private Student? existingstudent;
-    private Student student = new();
+    private GetStudentDTO? existingstudent;
+    private UpdateStudentDTO student = new();
     protected override void OnParametersSet()
     {
         existingstudent= StudentService.GetStudentById(Id);
         if (existingstudent != null)
         {
-            student = existingstudent;
+            student.Id = existingstudent.Id;
+            student.Name = existingstudent.Name;
+            student.DateOfBirth = existingstudent.DateOfBirth;
+            student.Address = existingstudent.Address;
         }
     }
     private void EditStudent()

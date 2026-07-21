@@ -4,9 +4,9 @@ namespace Application.Interfaces
 {
     public interface IStudent
     {
-        public List<Student> GetAllStudents();
+        public List<GetStudentDTO> GetAllStudents();
         public void AddStudent(AddStudentDTO student);
-        public Student? GetStudentById(int id);
-        public void UpdateStudent(Student student);
+        public GetStudentDTO? GetStudentById(int id);
+        public void UpdateStudent(UpdateStudentDTO student);
     }
 }
