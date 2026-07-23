@@ -2,6 +2,7 @@ using Application.DTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories
 {
     public class StudentRepository : IStudent
@@ -12,9 +13,9 @@ namespace Infrastructure.Repositories
             _dbcontext= dbcontext;
         }
 
-        public List<GetStudentDTO> GetAllStudents()
+        public async Task<List<GetStudentDTO>> GetAllStudentsAsync()
         {
-            return _dbcontext.Students.Select(s => new GetStudentDTO
+            return await _dbcontext.Students.Select(s => new GetStudentDTO
             {
                 Id = s.Id,
                 Name = s.Name,
@@ -22,10 +23,10 @@ namespace Infrastructure.Repositories
                 DateOfBirth = s.DateOfBirth,
                 Sex = s.Sex,
                 Phone= s.Phone,
-                Email = s.Email,
-            }).ToList();
+                Email = s.Email
+            }).ToListAsync();
         }
-        public void AddStudent(AddStudentDTO student)
+        public async Task AddStudentAsync(AddStudentDTO student)
         {
             
             _dbcontext.Students.Add(new Student{
@@ -36,11 +37,11 @@ namespace Infrastructure.Repositories
                 Email = student.Email,
                 Sex= student.Sex,
             });
-            _dbcontext.SaveChanges();
+            await _dbcontext.SaveChangesAsync();
         }
-        public GetStudentDTO? GetStudentById(int id)
+        public async Task<GetStudentDTO?> GetStudentByIdAsync(int id)
         {
-            return _dbcontext.Students.Where(s => s.Id == id).Select(s=> new GetStudentDTO
+            return await _dbcontext.Students.Where(s => s.Id == id).Select(s=> new GetStudentDTO
             {
                 Id = s.Id,
                 Name = s.Name,
@@ -49,26 +50,23 @@ namespace Infrastructure.Repositories
                 Sex = s.Sex,
                 Phone= s.Phone,
                 Email = s.Email
-            }).FirstOrDefault();
+            }).FirstOrDefaultAsync();
         }
-        public void UpdateStudent(UpdateStudentDTO student)
+        public async Task UpdateStudentAsync(UpdateStudentDTO student)
         {
-            // _dbcontext.Students.Update(student);
-            // _dbcontext.SaveChanges();
-
-             var ExistingStudent =  _dbcontext.Students.FirstOrDefault(s => s.Id == student.Id);
-             if(ExistingStudent != null)
+            var existingStudent = await _dbcontext.Students.FirstOrDefaultAsync(s => s.Id == student.Id);
+            if (existingStudent != null)
             {
-                ExistingStudent.Name = student.Name;
-                ExistingStudent.Sex = student.Sex;
-                ExistingStudent.DateOfBirth = student.DateOfBirth;
-                ExistingStudent.Address = student.Address;
-                ExistingStudent.Phone = ExistingStudent.Phone;
+                existingStudent.Name = student.Name;
+                existingStudent.Sex = student.Sex;
+                existingStudent.DateOfBirth = student.DateOfBirth;
+                existingStudent.Address = student.Address;
+                existingStudent.Phone = student.Phone;
 
-                _dbcontext.SaveChanges();
+                await _dbcontext.SaveChangesAsync();
             }
 
-
+            
         }
     }
 }

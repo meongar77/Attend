@@ -5,6 +5,16 @@
 
 <h3 class="form-label" >Student Details </h3>
 <a href="/students" class="btn btn-secondary">Back to List</a>
+@if(isLoading)
+{
+    <p>Loading...</p>
+}
+else if(student == null)
+{
+    <p>Student not found.</p>
+}
+else
+{
 <div>
     <div class="form-group" >
         <label class="form-label" >Id:</label>
@@ -23,15 +33,23 @@
         <small class="form-text" >@student.Sex</small>
     </div>
 </div>
+}
 @code{
     [Parameter] 
     public int Id{get;set;}
     private GetStudentDTO? student;
-    protected override void OnParametersSet()
+    private bool isLoading = true;
+    protected override async Task OnParametersSetAsync()
     {
-        student = StudentService.GetStudentById(Id);
+        isLoading = true;
+        student = null;
+        if(Id>0)
+        {
+         student = await StudentService.GetStudentByIdAsync(Id);
+        }
+        isLoading = false;
+
+
     }
-
-
 
 }

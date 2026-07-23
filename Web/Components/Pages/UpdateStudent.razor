@@ -5,7 +5,7 @@
 @inject NavigationManager Navigation
 @inject IStudentService StudentService
 <div>
-    <EditForm OnValidSubmit="EditStudent" Model="student">
+    <EditForm OnValidSubmit="EditStudentAsync" Model="student">
         <div class="form-group">
             <label>Name</label>
             <InputText @bind-Value="student.Name" class="form-control" />
@@ -35,9 +35,9 @@
     public int Id{get;set;}
     private GetStudentDTO? existingstudent;
     private UpdateStudentDTO student = new();
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        existingstudent= StudentService.GetStudentById(Id);
+        existingstudent = await StudentService.GetStudentByIdAsync(Id);
         if (existingstudent != null)
         {
             student.Id = existingstudent.Id;
@@ -46,9 +46,9 @@
             student.Address = existingstudent.Address;
         }
     }
-    private void EditStudent()
+    private async Task EditStudentAsync()
     {
-        StudentService.UpdateStudent(student);
+        await StudentService.UpdateStudentAsync(student);
         Navigation.NavigateTo("/students");
     }
 }

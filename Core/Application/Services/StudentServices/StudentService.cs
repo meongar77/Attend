@@ -10,22 +10,21 @@ namespace Application.Services.StudentServices
         {
             _student=student;
         }
-        public List<GetStudentDTO> GetAllStudents()
+        public async Task<List<GetStudentDTO>> GetAllStudentsAsync()
         {
-           return _student.GetAllStudents();
+           return await _student.GetAllStudentsAsync();
         }
-        public void AddStudent(AddStudentDTO student)
+        public async Task AddStudentAsync(AddStudentDTO student)
         {
-            _student.AddStudent(student);
-            
+            await _student.AddStudentAsync(student);
         }
-        public GetStudentDTO? GetStudentById(int id)
+        public async Task<GetStudentDTO?> GetStudentByIdAsync(int id)
         {
-            return _student.GetStudentById(id);
+            return await _student.GetStudentByIdAsync(id);
         }
-        public void UpdateStudent(UpdateStudentDTO student)
+        public async Task UpdateStudentAsync(UpdateStudentDTO student)
         {
-            _student.UpdateStudent(student);
+            await _student.UpdateStudentAsync(student);
         }
     }
     

@@ -34,9 +34,9 @@
     
         private List<GetStudentDTO> students  = new List<GetStudentDTO>();
         
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            students= StudentService.GetAllStudents();
+            students= await StudentService.GetAllStudentsAsync();
 
         }
 
