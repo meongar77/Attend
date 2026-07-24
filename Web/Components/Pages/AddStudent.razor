@@ -5,47 +5,91 @@
 @inject NavigationManager Navigation
 @inject IStudentService StudentService
 
-@page "/students/add"
-<div>
-    <EditForm Model="student" OnValidSubmit="SaveStudentAsync" >
-        <h1>Add New Student</h1>
-        <div class="form-group">
-            <label for="name" >Name:</label>
-            <InputText class="form-control" id="name" @bind-Value="student.Name" />
-        </div>
-        <div class="form-group">
-            <label for="sex" >Sex:</label>
-            <InputSelect id="sex" class="form-control" @bind-Value="student.Sex">
-                <option value="">Select Sex</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            </InputSelect>
-        </div>
-        <div class="form-group">
-            <label for="dob" >Date Of Birth:</label>
-            <InputDate id="dob" class="form-control" @bind-Value="student.DateOfBirth" />
-        </div>
-        <div class="form-group">
-            <label for="phone" >Phone:</label>
-            <InputText id="phone" class="form-control" @bind-Value="student.Phone" />
-        </div>
-        <div class="form-group">
-            <label for="email" >Email:</label>
-            <InputText id="email" class="form-control" @bind-Value="student.Email" />
-        </div>
-        <div class="form-group">
-            <label for="address" >Address:</label>
-            <InputText id="address" class="form-control" @bind-Value="student.Address" />
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Add Student</button>
-    </EditForm>
-</div>
+<MudDialog>
+    <TitleContent>Add Student</TitleContent>
+    <DialogContent>
+        <EditForm Model="student" OnValidSubmit="SaveStudentAsync">
+           <MudGrid>
+            <MudItem xs="6">
+                <MudTextField 
+                @bind-Value="student.Name"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="Fullname">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudSelect 
+                T="string"
+                @bind-Value="student.Sex"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="select sex">
+                <MudSelectItem Value="@("Male")">Male</MudSelectItem>
+                <MudSelectItem Value="@("Female")">Female</MudSelectItem>
+
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField 
+                @bind-Value="student.Email"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="mellissa@gmail.com">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField 
+                @bind-Value="student.Phone"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="078 2828 2828">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDatePicker 
+                Date="student.DateOfBirth"
+                DateChanged="date => student.DateOfBirth = date ?? default"
+                Margin="Margin.Dense"
+                DateFormat="yyyy-MM-dd"
+                Variant="Variant.Outlined"
+                Placeholder="dd/mm/yyyy">
+                </MudDatePicker>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField 
+                @bind-Value="student.Address"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="Kigali-Rwanda">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudButton 
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                FullWidth="true" 
+                ButtonType="ButtonType.Submit">
+                SAVE
+                </MudButton>
+            </MudItem>
+
+           </MudGrid> 
+        </EditForm>
+
+    </DialogContent>
+    
+</MudDialog>
     
 @code{
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
     private AddStudentDTO student = new ();
+
     private async Task SaveStudentAsync()
     {
         await StudentService.AddStudentAsync(student);
-        Navigation.NavigateTo("/students");
+        MudDialog.Close(DialogResult.Ok(true));
     }
 }
