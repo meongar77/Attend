@@ -1,0 +1,81 @@
+@page "/classes/add"
+@rendermode InteractiveServer
+
+@using Application.Services.ClasssServices
+@using Application.Services.FacultyServices
+@using Application.Services.EducationLevelServices
+@using Application.DTOs
+@using Domain.Entities
+@inject IClasssService ClasssService
+@inject IFacultyService FacultyService
+@inject IEducationLevelService EducationLevelService
+@inject NavigationManager Navigation
+
+<MudDialog>
+    <TitleContent>
+        Add Class
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="newClass" OnValidSubmit="SaveClassAsync">
+            <MudGrid>
+                <MudItem xs="12" >
+                    <MudTextField
+                    @bind-Value="newClass.Name"
+                    Margin="Margin.Dense"
+                    Variant="Variant.Outlined"
+                    Placeholder="Class name"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" >
+                    <MudSelect
+                    @bind-Value="newClass.EducationLevelId"
+                    Margin="Margin.Dense"
+                    Variant="Variant.Outlined"
+                    Placeholder="Select Education Level">
+                    @foreach (var level in educationLevels)
+                    {
+                        <MudSelectItem Value="@level.Id">@level.Name</MudSelectItem>
+                    }
+                    </MudSelect>
+                </MudItem>
+                <MudItem>
+                    <MudSelect
+                    @bind-Value="newClass.FacultyId"
+                    Margin="Margin.Dense"
+                    Variant="Variant.Outlined"
+                    Placeholder="Select Faculty">
+                    @foreach (var faculty in faculties)
+                    {
+                        <MudSelectItem Value="@faculty.Id">@faculty.Name</MudSelectItem>
+                    }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                <MudButton FullWidth="true" ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">SAVE</MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    private AddClasssDTO newClass = new();
+
+    private List<Faculty> faculties = new();
+    private List<EducationLevel> educationLevels = new();
+
+    private async Task SaveClassAsync()
+    {
+        await ClasssService.AddClasssAsync(newClass);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        faculties = await FacultyService.GetAllFacultiesAsync();
+        educationLevels = await EducationLevelService.GetAllEducationLevelsAsync();
+    }
+}

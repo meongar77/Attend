@@ -1,0 +1,128 @@
+@page "/classes"
+@using Application.Services.ClasssServices
+@using Application.DTOs
+@using Application.Services.FacultyServices
+@using Application.Services.EducationLevelServices
+@using Domain.Entities
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject IClasssService ClasssService
+@inject IFacultyService FacultyService
+
+@inject IEducationLevelService EducationLevelService
+
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4" >
+        <MudDataGrid T="GetClasssDTO" MultiSelection="true" Items="@classs" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+            Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged">
+            
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Classes</MudText>
+                <MudSpacer />
+                <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="d-none d-md-flex">
+                  <MudTextField 
+                    @bind-Value="_searchString" 
+                    Placeholder="Search" 
+                    Adornment="Adornment.Start" 
+                    Immediate="true"
+                    AdornmentIcon="@Icons.Material.Filled.Search" 
+                    IconSize="Size.Medium" 
+                    Variant="Variant.Outlined"
+                    Margin="Margin.Dense"
+                    Class="mt-1 w-100">
+                  </MudTextField>
+                </MudContainer>
+
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-4" @onclick="() => OpenDialogAsync(_closeButton)" >Add Class</MudButton>
+            
+            </ToolBarContent>
+
+            <Columns>
+                <SelectColumn T="GetClasssDTO" />
+                <PropertyColumn Property="x => x.Id" Title="Nr" Sortable="true" Filterable="false" />
+                <PropertyColumn Property="x => x.Name" />
+                <PropertyColumn Property="x => x.EducationLevelId" SortBy="@_sortBy" />
+                <PropertyColumn Property="x => x.FacultyId" />
+            </Columns>
+
+            <PagerContent>
+                <MudDataGridPager T="GetClasssDTO" />
+            </PagerContent>
+
+        </MudDataGrid>
+</MudContainer>
+@code{
+    
+
+        private string _searchString = string.Empty;
+        private bool _sortNameByLength;
+        private List<string> _events = new();
+        private List<Faculty> faculties = new();
+        private List<EducationLevel> educationLevels = new();
+
+        void RowClicked(DataGridRowClickEventArgs<GetClasssDTO> args)
+        {
+            _events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+        }
+        
+        void RowRightClicked(DataGridRowClickEventArgs<GetClasssDTO> args)
+        {
+            _events.Insert(0, $"Event = RowRightClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+        }
+
+        void SelectedItemsChanged(HashSet<GetClasssDTO> items)
+        {
+            _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
+        }
+
+
+        private Func<GetClasssDTO, object> _sortBy => x =>
+        {
+            if (_sortNameByLength)
+                return x.Name.Length;
+            else
+                return x.Name;
+        };
+        // quick filter - filter globally across multiple columns with the same input
+        private Func<GetClasssDTO, bool> _quickFilter => x =>
+        {
+            if (string.IsNullOrWhiteSpace(_searchString))
+                return true;
+
+            if (x.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (x.EducationLevelId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (x.FacultyId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
+        };
+        private List<GetClasssDTO> classs  = new List<GetClasssDTO>();
+        
+        protected override async Task OnInitializedAsync()
+        {
+            classs= await ClasssService.GetAllClasssAsync();
+
+        }
+        
+        private readonly DialogOptions _closeButton = new() { CloseButton = true };
+        private async Task OpenDialogAsync(DialogOptions options)
+        {
+            var dialog = await DialogService.ShowAsync<AddClasss>("Add New Class", options);
+                
+            var result = await dialog.Result;
+
+            if (result is not null && !result.Canceled)
+            {
+                classs = await ClasssService.GetAllClasssAsync();
+                faculties = await FacultyService.GetAllFacultiesAsync();
+                educationLevels = await EducationLevelService.GetAllEducationLevelsAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+
+    }
