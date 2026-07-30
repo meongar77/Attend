@@ -19,6 +19,12 @@ namespace Infrastructure.DependencyInjection
                 options.UseSqlServer(configuration.GetConnectionString("ATTENDCON"))
             );
             services.AddScoped<IStudent, StudentRepository>();
+            services.AddScoped<IClasss, ClasssRepository>();
+            services.AddScoped<IFaculty, FacultyRepository>();
+            services.AddScoped<IEducationLevel, EducationLevelRepository>();
+
+
+
             
             return services;
 
