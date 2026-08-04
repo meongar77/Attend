@@ -12,6 +12,7 @@ namespace Infrastructure.Data
         public DbSet<Faculty> Faculties{get;set;}
 
         public DbSet<EducationLevel> EducationLevels{get;set;}
+        // public DbSet<Registration>Registrations{get;set;}
 
 
     }

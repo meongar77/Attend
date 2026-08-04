@@ -1,0 +1,95 @@
+@using Application.Services.StudentServices
+@using Application.DTOs
+@using Infrastructure.Migrations
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IStudentService StudentService
+
+<MudDialog>
+    <TitleContent>Add Student</TitleContent>
+    <DialogContent>
+        <EditForm Model="student" OnValidSubmit="SaveStudentAsync">
+           <MudGrid>
+            <MudItem xs="6">
+                <MudTextField 
+                @bind-Value="student.Name"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="Fullname">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudSelect 
+                T="string"
+                @bind-Value="student.Sex"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="select sex">
+                <MudSelectItem Value="@("Male")">Male</MudSelectItem>
+                <MudSelectItem Value="@("Female")">Female</MudSelectItem>
+
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField 
+                @bind-Value="student.Email"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="mellissa@gmail.com">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField 
+                @bind-Value="student.Phone"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="078 2828 2828">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDatePicker 
+                Date="student.DateOfBirth"
+                DateChanged="date => student.DateOfBirth = date ?? default"
+                Margin="Margin.Dense"
+                DateFormat="yyyy-MM-dd"
+                Variant="Variant.Outlined"
+                Placeholder="dd/mm/yyyy">
+                </MudDatePicker>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField 
+                @bind-Value="student.Address"
+                Margin="Margin.Dense"
+                Variant="Variant.Outlined"
+                Placeholder="Kigali-Rwanda">
+                </MudTextField>
+            </MudItem>
+            <MudItem xs="12">
+                <MudButton 
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                FullWidth="true" 
+                ButtonType="ButtonType.Submit">
+                SAVE
+                </MudButton>
+            </MudItem>
+
+           </MudGrid> 
+        </EditForm>
+
+    </DialogContent>
+    
+</MudDialog>
+    
+@code{
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+    private AddStudentDTO student = new ();
+
+    private async Task SaveStudentAsync()
+    {
+        await StudentService.AddStudentAsync(student);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

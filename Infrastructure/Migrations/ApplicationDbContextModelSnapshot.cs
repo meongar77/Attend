@@ -40,6 +40,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EducationLevelId");
@@ -81,6 +84,41 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Faculties");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Registration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Registrations");
                 });
 
             modelBuilder.Entity("Domain.Entities.Student", b =>
@@ -136,6 +174,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("EducationLevel");
 
                     b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Registration", b =>
+                {
+                    b.HasOne("Domain.Entities.Classs", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Domain.Entities.EducationLevel", b =>
