@@ -54,6 +54,16 @@
                         </MudChip>
                     </CellTemplate>
                 </TemplateColumn>
+                <TemplateColumn>
+                    <CellTemplate>
+                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Class Details Menu">
+                        <MudMenuItem Icon="@Icons.Material.Filled.Add" OnClick="@(() => OnOpenRegistration(context.Item, _closeButton))" >Add Student</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Filled.Info">Details</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Filled.Edit">Edit</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Filled.Edit">Delete</MudMenuItem>
+                     </MudMenu>
+                    </CellTemplate>
+                </TemplateColumn>
                 
                 
             </Columns>
@@ -143,9 +153,21 @@
                 await InvokeAsync(StateHasChanged);
             }
         }
-        
+        private async Task OnOpenRegistration(GetClasssDTO classss, DialogOptions options)
+        { 
+            //this is parameter which is passed to the Registration.razor page so that it can be used to get the classid of the selected class when you click the add student menuitem
+           var parameters = new DialogParameters
+            {
+                { nameof(Registration.selectedClass), classss }
+            };
 
-        
+            var dialog = await DialogService.ShowAsync<Registration>("Add New Class", parameters, options);
+                
+            var result = await dialog.Result;
 
+            if (result is not null && !result.Canceled)
+            {
 
+            }
+        } 
     }

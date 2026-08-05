@@ -22,10 +22,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IClasss, ClasssRepository>();
             services.AddScoped<IFaculty, FacultyRepository>();
             services.AddScoped<IEducationLevel, EducationLevelRepository>();
-            // services.AddScoped<IRegistration, RegistrationRepository>();
-
-
-
+            services.AddScoped<IRegistration, RegistrationRepository>();
             
             return services;
 

@@ -1,0 +1,214 @@
+@using Application.Services.StudentServices
+@using Application.Services.ClasssServices
+@using Application.DTOs
+@using Domain.ValueObjects 
+@using Application.Interfaces
+@rendermode InteractiveServer
+@inject IStudentService StudentService
+@inject IClasssService ClasssService
+@inject IRegistrationService RegistrationService
+@inject ISnackbar Snackbar
+
+<MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
+    @* This is simple details of the selected class *@
+    <TitleContent>
+    <MudPaper Class="mb-3" Elevation="0">
+                <MudStack Row="true" Spacing="1" AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.h6">@selectedClass?.Name</MudText>
+                    @if (selectedClass is not null)
+                    {
+                        <MudChip T="string"
+                                 Size="Size.Small"
+                                 Variant="Variant.Filled"
+                                 Color="@GetStatusColor(selectedClass.Status)">
+                            @selectedClass.Status
+                        </MudChip>
+                    }
+                </MudStack>
+                <MudText Color="Color.Secondary" FontWeight="FontWeight.Bold" Typo="Typo.body2">@selectedClass?.Faculty?.Name | @selectedClass?.EducationLevel?.Name</MudText>
+            </MudPaper>
+        </TitleContent>
+    <DialogContent>
+        <MudStack  Spacing="3">
+
+            <EditForm Model="registration" OnValidSubmit="SaveRegistrationAsync">
+                <MudGrid Class="mb-3">
+                    <MudItem xs="12">
+                        <MudAutocomplete T="string"
+                                         Label="Student"
+                                         Margin="Margin.Dense"
+                                         Dense="true"
+                                         Variant="Variant.Outlined"
+                                         Placeholder="Type to search student"
+                                         SearchFunc="Search"
+                                         Value="@GetStudentName(registration.StudentId)"
+                                         ValueChanged="OnStudentSelected"
+                                         ToStringFunc="@(s => s ?? string.Empty)" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudDatePicker 
+                        Date="registration.StartDate"
+                        DateChanged="date => registration.StartDate = date ?? default"
+                        Margin="Margin.Dense"
+                        DateFormat="yyyy-MM-dd"
+                        Variant="Variant.Outlined"
+                        Label="Start Date"
+                        Placeholder="dd/mm/yyyy">
+                        </MudDatePicker>  
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudDatePicker 
+                        Date="registration.EndDate"
+                        DateChanged="date => registration.EndDate = date ?? default"
+                        Margin="Margin.Dense"
+                        DateFormat="yyyy-MM-dd"
+                        Label="End Date"
+                        Variant="Variant.Outlined"
+                        Placeholder="dd/mm/yyyy">
+                        </MudDatePicker>  
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" ButtonType="ButtonType.Submit">
+                            SAVE
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+            @* This is muddatagrid to display the class members of the selected class *@
+            <MudDataGrid T="GetRegistrationDTO" 
+                         Dense="true" 
+                         MultiSelection="true" 
+                         Items="@filteredRegistration">
+            
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Class Member</MudText>
+            </ToolBarContent>
+
+            <Columns>
+                <SelectColumn T="GetRegistrationDTO" />
+                <PropertyColumn Property="x => x.Student.Id" Title="Nr" Sortable="true" Filterable="false" />
+                <PropertyColumn Property="x => x.Student.Name" Title="Student Name" />
+                <PropertyColumn Property="x => x.StartDate" Title="Class Start" Format="yyyy-MM-dd" />
+                <PropertyColumn Property="x => x.EndDate" Title="Class End" Format="yyyy-MM-dd" />
+                <TemplateColumn Title="Status">
+                    <CellTemplate>
+                        <MudChip T="string"
+                                 Size="Size.Small"
+                                 Variant="Variant.Filled"
+                                 Color="@GetStatusColor(context.Item.Status)">
+                            @context.Item.Status
+                        </MudChip>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn>
+                    <CellTemplate>
+                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Class Details Menu">
+                        <MudMenuItem Icon="@Icons.Material.Filled.Info">Details</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Filled.Edit">Edit</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Filled.Edit">Delete</MudMenuItem>
+                     </MudMenu>
+                    </CellTemplate>
+                </TemplateColumn>
+                
+                
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="GetRegistrationDTO" />
+            </PagerContent>
+
+        </MudDataGrid>
+        </MudStack>
+    </DialogContent>
+</MudDialog>
+
+@code{
+
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+    //This is the parameter which is bound by the one passed from Classes.razor when you click the add student menuitem to open registrationdialog
+    [Parameter]
+    public GetClasssDTO? selectedClass {get;set;}
+
+    private readonly AddRegistrationDTO registration = new()
+    {
+        //These to makes datetimepicker default date be today instead of being 0001/1/1
+        StartDate=DateTime.Today,
+        EndDate=DateTime.Today,
+    };
+    private List<GetStudentDTO> students = new();
+    private List<GetRegistrationDTO> registrations = new();
+   // This is for us to get the Registration list(class members) of the selected class only
+    private List<GetRegistrationDTO> filteredRegistration => registrations.Where(r => selectedClass is null || r.ClassId == selectedClass.Id)
+            .ToList();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        registrations = await RegistrationService.GetAllRegistrationsAsync();
+        students = await StudentService.GetAllStudentsAsync();
+
+        //Add this to set the ClassId
+        if (selectedClass is not null)
+        {
+            registration.ClassId = selectedClass.Id;
+        }
+        
+    }  
+
+    private async Task SaveRegistrationAsync()
+    {
+        try
+        {
+            await RegistrationService.AddRegistrationAsync(registration);
+            //Add this to bind datagrid so that when you save new registration displays automatically 
+            registrations = await RegistrationService.GetAllRegistrationsAsync();
+            Snackbar.Add("Student added successfully.", Severity.Success);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private string GetStudentName(int studentId) => students.FirstOrDefault(s => s.Id == studentId)?.Name ?? string.Empty;
+
+    private Task OnStudentSelected(string? studentName)
+    {
+        var selectedStudent = students.FirstOrDefault(s => s.Name == studentName);
+        registration.StudentId = selectedStudent?.Id ?? 0;
+        return Task.CompletedTask;
+    }
+
+    
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+        {
+            return students.Select(s => s.Name);
+        }
+
+        return students.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(s => s.Name);
+    }
+    //For getting registration status color(mudchip) color
+    private static Color GetStatusColor(RegistrationStatus status) => status switch
+        {
+            RegistrationStatus.Active => Color.Success,
+            RegistrationStatus.Repeated => Color.Warning,
+            RegistrationStatus.Promoted => Color.Info,
+            RegistrationStatus.Dropped => Color.Error,
+            _ => Color.Default
+        };
+        //For getting class status color(mudchip) color
+    private static Color GetStatusColor(ClassStatus status) => status switch
+    {
+        ClassStatus.Active => Color.Success,
+        ClassStatus.Full => Color.Warning,
+        ClassStatus.Ongoing => Color.Info,
+        ClassStatus.Deleted => Color.Error,
+        _ => Color.Default
+    };
+}
