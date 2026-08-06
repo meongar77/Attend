@@ -26,6 +26,10 @@ namespace Application.Services.ClasssServices
         {
             await _classs.UpdateClasssAsync(classs);
         }
+        public async Task<List<GetClassStatusCountDTO>> GetClassStatusCountAsync()
+        {
+            return await _classs.GetClassStatusCountAsync();
+        }
     }
     
 }

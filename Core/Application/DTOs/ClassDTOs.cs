@@ -27,4 +27,9 @@ namespace Application.DTOs{
         public Faculty Faculty{get;set;}
         public EducationLevel EducationLevel{get;set;}
     }
+    public class GetClassStatusCountDTO
+    {
+        public ClassStatus Status{get; set;}
+        public int Count{get;set;}
+    }
 }

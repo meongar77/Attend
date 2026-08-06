@@ -1,0 +1,26 @@
+<MudCard>
+    <MudCardContent>
+        <MudStack AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween">
+            <MudText Typo="Typo.overline" Color="@TitleColor">@Title</MudText>
+        </MudStack>
+        <MudStack Row="true" Justify="Justify.SpaceBetween"  AlignItems="AlignItems.Center" Class="mt-2">
+            <MudText Typo="Typo.h5" Color="@ValueColor">@Value</MudText>
+            <MudIcon Color="@IconColor" Icon="@Icon" />
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+@code{
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public int Value { get; set; }
+    [Parameter]
+    public string Icon { get; set; }
+    [Parameter]
+    public Color ValueColor { get; set; }
+    [Parameter]
+    public Color TitleColor { get; set; }
+    [Parameter]
+    public Color IconColor { get; set; }
+}

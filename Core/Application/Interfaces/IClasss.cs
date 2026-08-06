@@ -8,5 +8,6 @@ namespace Application.Interfaces
         Task AddClasssAsync(AddClasssDTO classs);
         public Task<GetClasssDTO?> GetClasssByIdAsync(int id);
         public Task UpdateClasssAsync(UpdateClasssDTO classs);
+        public Task<List<GetClassStatusCountDTO>> GetClassStatusCountAsync();
     }
 }

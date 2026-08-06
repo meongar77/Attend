@@ -8,5 +8,6 @@ namespace Application.Services.ClasssServices
          Task AddClasssAsync(AddClasssDTO classs);
          Task<GetClasssDTO?> GetClasssByIdAsync(int id);
          Task UpdateClasssAsync(UpdateClasssDTO classs);
+         Task<List<GetClassStatusCountDTO>> GetClassStatusCountAsync();
     }
 }

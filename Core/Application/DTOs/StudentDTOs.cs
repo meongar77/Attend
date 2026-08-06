@@ -29,4 +29,5 @@ namespace Application.DTOs{
         public DateTime DateOfBirth{get;set;}
         public string Adress{get;set;}
     }
+    
 }
