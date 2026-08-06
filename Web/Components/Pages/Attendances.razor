@@ -1,0 +1,154 @@
+@page "/attendances"
+@using Application.Services.AttendanceServices
+@using Application.DTOs
+@using Domain.ValueObjects
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject IAttendanceService AttendanceService
+<MudContainer>
+    <MudDataGrid 
+                T="GetAttendanceDTO" 
+                Dense="true" 
+                MultiSelection="true" 
+                Items="@attendances" 
+                SortMode="SortMode.Multiple" 
+                Filterable="true" 
+                QuickFilter="@_quickFilter"
+                Hideable="true" 
+                RowClick="@RowClicked" 
+                RowContextMenuClick="RowRightClicked" 
+                SelectedItemsChanged="@SelectedItemsChanged">
+            
+            <ToolBarContent>
+                            <MudText 
+                            Typo="Typo.h6">
+                            Classes
+                            </MudText>
+                <MudSpacer />
+                <MudContainer 
+                            MaxWidth="MaxWidth.ExtraSmall" 
+                            Class="d-none d-md-flex">
+                  <MudTextField 
+                            @bind-Value="_searchString" 
+                            Placeholder="Search" 
+                            Adornment="Adornment.Start" 
+                            Immediate="true"
+                            AdornmentIcon="@Icons.Material.Filled.Search" 
+                            IconSize="Size.Medium" 
+                            Variant="Variant.Outlined"
+                            Margin="Margin.Dense"
+                            Class="mt-1 w-100">
+                  </MudTextField>
+                </MudContainer>
+
+                <MudButton 
+                          Color="Color.Primary" 
+                          Variant="Variant.Filled" 
+                          Class="ml-4" @onclick="() => OpenDialogAsync(_closeButton)">
+                          Add Class</MudButton>
+            </ToolBarContent>
+
+            <Columns>
+                <SelectColumn T="GetAttendanceDTO" />
+                <PropertyColumn Property="x => x.Id" Title="Nr" Sortable="true" Filterable="false" />
+                <PropertyColumn Property="x => x.Classs.Name" Title="Class" />
+                <PropertyColumn Property="x => x.Classs.EducationLevel.Name" Title="Education Level" />
+                <PropertyColumn Property="x => x.Classs.Faculty.Name" Title="Faculty" />
+                <PropertyColumn Property="x => x.InstructorName" Title="Instructor" />
+                <PropertyColumn Property="x => x.Date" Title="Date" Format="MM/dd/yyyy" />
+                <TemplateColumn Title="Status" HeaderStyle="white-space:nowrap" ItemStyle="white-space:nowrap">
+                    <CellTemplate>
+                        <MudChip T="string"
+                                 Size="Size.Small"
+                                 Variant="Variant.Filled"
+                                 Color="@GetStatusColor(context.Item.Status)">
+                            @context.Item.Status
+                        </MudChip>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            
+
+            <PagerContent>
+                <MudDataGridPager T="GetAttendanceDTO" />
+            </PagerContent>
+
+        </MudDataGrid>
+</MudContainer>
+@code{
+    private string _searchString = string.Empty;
+    private bool _sortNameByLength;
+    private List<string> _events = new();
+    private List<GetAttendanceDTO> attendances = new List<GetAttendanceDTO>();
+        void RowClicked(DataGridRowClickEventArgs<GetAttendanceDTO> args)
+    {
+        _events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+    }
+    
+    void RowRightClicked(DataGridRowClickEventArgs<GetAttendanceDTO> args)
+    {
+        _events.Insert(0, $"Event = RowRightClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+    }
+
+    void SelectedItemsChanged(HashSet<GetAttendanceDTO> items)
+    {
+        _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
+    }
+    private Func<GetClasssDTO, object> _sortBy => x =>
+    {
+        if (_sortNameByLength)
+            return x.Name.Length;
+        else
+            return x.Name;
+    };
+
+    private static Color GetStatusColor(AttendanceStatus status) => status switch
+    {
+        AttendanceStatus.Active => Color.Success,
+        AttendanceStatus.Deleted => Color.Error,
+        _ => Color.Default
+    };
+    // quick filter - filter globally across multiple columns with the same input
+    private Func<GetAttendanceDTO, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Classs?.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (x.Classs?.EducationLevel?.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (x.Classs?.Faculty?.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (x.InstructorName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (x.Date.ToString("MM/dd/yyyy").Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        attendances = await AttendanceService.GetAllAttendancesAsync();
+
+    }
+    private readonly DialogOptions _closeButton = new() { CloseButton = true };
+    private async Task OpenDialogAsync(DialogOptions options)
+    {
+        var dialog = await DialogService.ShowAsync<AddAttendance>("Add New Attendance", options);
+            
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            attendances = await AttendanceService.GetAllAttendancesAsync();
+            
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}
