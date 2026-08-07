@@ -21,4 +21,15 @@ namespace Domain.ValueObjects
             Dropped,
             Repeated,
         }
+        public enum AttendanceStatus
+        {
+            Active,
+            Present,
+            Absent,
+            Late,
+            Excused,
+            Deleted,
+            UnTaken
+            
+        }
 }

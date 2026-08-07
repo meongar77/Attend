@@ -13,6 +13,8 @@ namespace Infrastructure.Data
 
         public DbSet<EducationLevel> EducationLevels{get;set;}
         public DbSet<Registration>Registrations{get;set;}
+        public DbSet<Attendance> Attendances{get;set;}
+        public DbSet<StudentAttendance> StudentAttendances{get;set;}
 
 
     }

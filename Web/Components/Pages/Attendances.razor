@@ -137,7 +137,14 @@
         attendances = await AttendanceService.GetAllAttendancesAsync();
 
     }
-    private readonly DialogOptions _closeButton = new() { CloseButton = true };
+    //You may add more options to the Dialog: These last ones I added are intended to make the dialog of AddAttendance be quit large in width
+    private readonly DialogOptions _closeButton = new() 
+    {
+         CloseButton = true,
+         //options for enlarging Dialog
+         MaxWidth = MaxWidth.ExtraExtraLarge,
+         FullWidth=true
+    };
     private async Task OpenDialogAsync(DialogOptions options)
     {
         var dialog = await DialogService.ShowAsync<AddAttendance>("Add New Attendance", options);
